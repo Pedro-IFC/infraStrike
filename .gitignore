@@ -1,0 +1,25 @@
+# Evitar o ambiente virtual (pasta padrão do venv)
+venv/
+.env/
+*.env
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos de log
+*.log
+
+# IDEs e editores (opcional)
+.vscode/
+.idea/
+*.swp
+
+# Arquivos de dependência gerados
+*.egg-info/
+dist/
+build/
+
+# Arquivos temporários
+.DS_Store
