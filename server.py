@@ -34,45 +34,37 @@ def handle_cliente(conn, addr):
 
 def iniciar_jogo(conns):
     conn1, conn2 = conns
-    addr1 = conn1.getpeername()
-    addr2 = conn2.getpeername()
-    print(f"[*] Iniciando jogo entre {addr1} e {addr2}")
-
-    vez = 0  # 0: conn1 ataca, 1: conn2 ataca
+    vez = 0  # 0: conn1 joga, 1: conn2 joga
 
     try:
         while True:
             atacante = conns[vez]
             defensor = conns[1 - vez]
-            addr_atacante = atacante.getpeername()
-            addr_defensor = defensor.getpeername()
 
             atacante.sendall("SEU_TURNO".encode())
-            print(f"[>] Esperando ataque de {addr_atacante}")
             ataque = atacante.recv(1024)
             if not ataque:
-                print("[!] Conexão encerrada pelo atacante.")
                 break
-            print(f"[{addr_atacante} → {addr_defensor}] {ataque.decode()}")
 
             defensor.sendall(ataque)
-
-            print(f"[<] Esperando resposta de {addr_defensor}")
             resposta = defensor.recv(1024)
             if not resposta:
-                print("[!] Conexão encerrada pelo defensor.")
                 break
-            print(f"[{addr_defensor} → {addr_atacante}] {resposta.decode()}")
 
             atacante.sendall(resposta)
 
-            vez = 1 - vez  # alterna o turno
+            if resposta.decode() == "VITORIA":
+                defensor.sendall("DERROTA".encode())
+                break
+
+            vez = 1 - vez  # troca o turno
     except Exception as e:
-        print(f"[!] Erro durante o jogo: {e}")
+        print(f"[!] Erro: {e}")
     finally:
         conn1.close()
         conn2.close()
-        print("[*] Jogo encerrado.")
+        print("[*] Conexões encerradas.")
+
 
 HOST = '0.0.0.0'
 PORT = int(SERVER_PORT) 
